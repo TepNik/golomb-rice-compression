@@ -13,7 +13,7 @@ This is the implementation of Golomb-Rice coding. You can find information about
 
 ## Flags
 
-##### 8, 16, 32 or 64 bit compression flags
+##### 8, 16, 32 or 64 bit compression flags (by default it is 32 bit)
         -i8, -i16, -i32 or -i64
 
 ##### Custom output file (by default it is input_file.golomb)
