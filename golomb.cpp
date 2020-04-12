@@ -14,7 +14,9 @@ void write_next_bit(std::ofstream &fout, char &ch, int &ind, bool val);
 
 template <typename type>
 void write_n_th_bit(type &ch, int ind, bool val);
-bool get_n_th_bit(char ch, int ind);
+
+template <typename type>
+bool get_n_th_bit(type ch, int ind);
 
 template <typename type>
 int get_overflow(type x, int k);
@@ -23,14 +25,14 @@ template <typename type>
 int get_first_k_bit(type x, int k);
 
 template <typename type>
-void golumb_c(std::ifstream &fin, std::ofstream &fout, bool is_signed, int k);
+void golomb_c(std::ifstream &fin, std::ofstream &fout, bool is_signed, int k);
 
 void decompress(std::ifstream &fin, std::ofstream &fout);
 
 bool get_next_bit(std::ifstream &fin, char &ch, int &ind);
 
 template <typename type>
-void golumb_d(std::ifstream &fin, std::ofstream &fout, bool is_signed, int k);
+void golomb_d(std::ifstream &fin, std::ofstream &fout, bool is_signed, int k);
 
 std::ifstream::pos_type filesize(const char* filename)
 {
@@ -53,11 +55,6 @@ int main(int argc, char *argv[])
         int_size = 32;
     bool is_signed = true, compress = true;
     get_parameters(argc, argv, k, is_signed, input_ind, output_ind, int_size, compress);
-    /* std::cout << "k = " << k << '\n'
-              << "is_signed = " << is_signed << '\n'
-              << "input_ind = " << input_ind << '\n'
-              << "output_ind = " << output_ind << '\n'
-              << "int_size = " << int_size << '\n'; */
     if (input_ind == -1)
     {
         std::cout << "\n\nError!\n\nThere must be one input file!\n";
@@ -76,9 +73,9 @@ int main(int argc, char *argv[])
     if (output_ind == -1)
     {
         if (compress)
-            output_name = input_name + ".golumb";
-        else if (input_name.find(".golumb") != std::string::npos)
-            output_name = input_name.substr(0, input_name.find(".golumb"));
+            output_name = input_name + ".golomb";
+        else if (input_name.find(".golomb") != std::string::npos)
+            output_name = input_name.substr(0, input_name.find(".golomb"));
         fout.open(output_name, std::ifstream::binary);
     }
     else
@@ -88,13 +85,13 @@ int main(int argc, char *argv[])
     }
 
     if (int_size == 8 && compress)
-        golumb_c<int8_t>(fin, fout, is_signed, k);
+        golomb_c<int8_t>(fin, fout, is_signed, k);
     else if (int_size == 16 && compress)
-        golumb_c<int16_t>(fin, fout, is_signed, k);
+        golomb_c<int16_t>(fin, fout, is_signed, k);
     else if (int_size == 32 && compress)
-        golumb_c<int32_t>(fin, fout, is_signed, k);
+        golomb_c<int32_t>(fin, fout, is_signed, k);
     else if (int_size == 64 && compress)
-        golumb_c<int64_t>(fin, fout, is_signed, k);
+        golomb_c<int64_t>(fin, fout, is_signed, k);
     else if (!compress)
         decompress(fin, fout);
 
@@ -180,9 +177,10 @@ void write_n_th_bit(type &ch, int ind, bool val)
         ch &= ~mask;
 }
 
-bool get_n_th_bit(char ch, int ind)
+template <typename type>
+bool get_n_th_bit(type ch, int ind)
 {
-    char mask = (1 << ind);
+    type mask = (1 << ind);
     return (ch & mask) != 0;
 }
 
@@ -202,7 +200,7 @@ int get_first_k_bit(type x, int k)
 }
 
 template <typename type>
-void golumb_c(std::ifstream &fin, std::ofstream &fout, bool is_signed, int k)
+void golomb_c(std::ifstream &fin, std::ofstream &fout, bool is_signed, int k)
 {
     union begining
     {
@@ -254,13 +252,13 @@ void decompress(std::ifstream &fin, std::ofstream &fout)
     fin.read(beg.header_ch, sizeof(header));
 
     if (beg.h.int_size == 8)
-        golumb_d<int8_t>(fin, fout, beg.h.is_signed, beg.h.k);
+        golomb_d<int8_t>(fin, fout, beg.h.is_signed, beg.h.k);
     else if (beg.h.int_size == 16)
-        golumb_d<int16_t>(fin, fout, beg.h.is_signed, beg.h.k);
+        golomb_d<int16_t>(fin, fout, beg.h.is_signed, beg.h.k);
     else if (beg.h.int_size == 32)
-        golumb_d<int32_t>(fin, fout, beg.h.is_signed, beg.h.k);
+        golomb_d<int32_t>(fin, fout, beg.h.is_signed, beg.h.k);
     else if (beg.h.int_size == 64)
-        golumb_d<int64_t>(fin, fout, beg.h.is_signed, beg.h.k);
+        golomb_d<int64_t>(fin, fout, beg.h.is_signed, beg.h.k);
     else
     {
         std::cout << "\nError!\n\nWrong input file for decompression\n";
@@ -282,7 +280,7 @@ bool get_next_bit(std::ifstream &fin, char &ch, int &ind)
 }
 
 template <typename type>
-void golumb_d(std::ifstream &fin, std::ofstream &fout, bool is_signed, int k)
+void golomb_d(std::ifstream &fin, std::ofstream &fout, bool is_signed, int k)
 {
     int ind = 0;
     char ch;
