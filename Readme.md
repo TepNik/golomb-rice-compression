@@ -13,15 +13,15 @@ This is the implementation of Golomb-Rice coding. You can find information about
 
 ## Flags
 
-#### 8, 16, 32 or 64 bit compression flags
+##### 8, 16, 32 or 64 bit compression flags
         -i8, -i16, -i32 or -i64
 
-#### Custom output file (by default it is input_file.golomb)
+##### Custom output file (by default it is input_file.golomb)
         -o output_file
 
-#### Set variable k to new value n. For 8, 16, 32 and 64 bit compression default value for k is 4, 8, 16 and 32 respectively.
+##### Set variable k to new value n. For 8, 16, 32 and 64 bit compression default value for k is 4, 8, 16 and 32 respectively.
         -k=n
 
-#### Make int signed or unsigned
+##### Make int signed or unsigned
         -sign=true
         -sign=false
