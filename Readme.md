@@ -11,6 +11,9 @@ This is the implementation of Golomb-Rice coding. You can find information about
 ## Compress file
         ./golomb input_file
 
+## Decompress file
+        ./golomb -d input_file
+
 ## Flags
 
 ##### 8, 16, 32 or 64 bit compression flags (by default it is 32 bit)
