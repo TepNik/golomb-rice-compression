@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 
     int k = -1,
         input_ind = -1, output_ind = -1,
-        int_size = 32;
+        int_size = 16;
     bool is_signed = true, compress = true;
     get_parameters(argc, argv, k, is_signed, input_ind, output_ind, int_size, compress);
     if (input_ind == -1)
