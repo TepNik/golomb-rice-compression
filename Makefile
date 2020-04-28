@@ -1,2 +1,2 @@
-golumb:
-    g++ golumb.cpp -o golumb -O3
+rice:
+    g++ rice.cpp -o rice -O3
