@@ -1,7 +1,7 @@
-Golomb-Rice coding compressor
+Compressor based on Rice coding
 ======================================
 
-This is the implementation of Golomb-Rice coding. You can find information about this algorithm [here](https://monkeysaudio.com/theory.html).
+This is the implementation of Rice coding. You can find information about this algorithm [here](https://monkeysaudio.com/theory.html).
 
 # File Compression
 
@@ -9,17 +9,17 @@ This is the implementation of Golomb-Rice coding. You can find information about
         make
 
 ## Compress file
-        ./golomb input_file
+        ./rice input_file
 
 ## Decompress file
-        ./golomb -d input_file
+        ./rice -d input_file
 
 ## Flags
 
-##### 8, 16, 32 or 64 bit compression flags (by default it is 32 bit)
+##### 8, 16, 32 or 64 bit compression flags (by default it is 16 bit)
         -i8, -i16, -i32 or -i64
 
-##### Custom output file (by default it is input_file.golomb)
+##### Custom output file (by default it is input_file.rice)
         -o output_file
 
 ##### Set variable k to new value n. For 8, 16, 32 and 64 bit compression default value for k is 4, 8, 16 and 32 respectively.
