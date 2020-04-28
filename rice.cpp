@@ -2,6 +2,7 @@
 #include <fstream>
 #include <cstring>
 #include <cmath>
+#include <chrono>
 
 void get_parameters(int argc, char *argv[],
                     int &k, bool &is_signed,
@@ -25,14 +26,14 @@ template <typename type>
 int get_first_k_bit(type x, int k);
 
 template <typename type>
-void golomb_c(std::ifstream &fin, std::ofstream &fout, bool is_signed, int k);
+void rice_c(std::ifstream &fin, std::ofstream &fout, bool is_signed, int k);
 
 void decompress(std::ifstream &fin, std::ofstream &fout);
 
 bool get_next_bit(std::ifstream &fin, char &ch, int &ind);
 
 template <typename type>
-void golomb_d(std::ifstream &fin, std::ofstream &fout, bool is_signed, int k);
+void rice_d(std::ifstream &fin, std::ofstream &fout, bool is_signed, int k);
 
 std::ifstream::pos_type filesize(const char* filename)
 {
@@ -48,7 +49,7 @@ struct header
 
 int main(int argc, char *argv[])
 {
-    std::cout << "Compressing algorithm Golomb-Rice\n";
+    std::cout << "Compressing algorithm based on Rice coding\n";
 
     int k = -1,
         input_ind = -1, output_ind = -1,
@@ -73,9 +74,9 @@ int main(int argc, char *argv[])
     if (output_ind == -1)
     {
         if (compress)
-            output_name = input_name + ".golomb";
-        else if (input_name.find(".golomb") != std::string::npos)
-            output_name = input_name.substr(0, input_name.find(".golomb"));
+            output_name = input_name + ".rice";
+        else if (input_name.find(".rice") != std::string::npos)
+            output_name = input_name.substr(0, input_name.find(".rice"));
         fout.open(output_name, std::ifstream::binary);
     }
     else
@@ -84,16 +85,19 @@ int main(int argc, char *argv[])
         output_name = argv[output_ind];
     }
 
+    auto start = std::chrono::high_resolution_clock::now();
     if (int_size == 8 && compress)
-        golomb_c<int8_t>(fin, fout, is_signed, k);
+        rice_c<int8_t>(fin, fout, is_signed, k);
     else if (int_size == 16 && compress)
-        golomb_c<int16_t>(fin, fout, is_signed, k);
+        rice_c<int16_t>(fin, fout, is_signed, k);
     else if (int_size == 32 && compress)
-        golomb_c<int32_t>(fin, fout, is_signed, k);
+        rice_c<int32_t>(fin, fout, is_signed, k);
     else if (int_size == 64 && compress)
-        golomb_c<int64_t>(fin, fout, is_signed, k);
+        rice_c<int64_t>(fin, fout, is_signed, k);
     else if (!compress)
         decompress(fin, fout);
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end - start;
 
     int output_size = filesize(output_name.c_str());
     std::cout << "Input file = " << argv[input_ind] << '\n'
@@ -106,6 +110,7 @@ int main(int argc, char *argv[])
     else
         std::cout << "Decompressing " << source_size << " bytes.\n"
                   << "Output size is " << output_size << ".\n";
+    std::cout << "Time: " << elapsed_seconds.count() << '\n';
 
     return 0;
 }
@@ -200,7 +205,7 @@ int get_first_k_bit(type x, int k)
 }
 
 template <typename type>
-void golomb_c(std::ifstream &fin, std::ofstream &fout, bool is_signed, int k)
+void rice_c(std::ifstream &fin, std::ofstream &fout, bool is_signed, int k)
 {
     union begining
     {
@@ -252,13 +257,13 @@ void decompress(std::ifstream &fin, std::ofstream &fout)
     fin.read(beg.header_ch, sizeof(header));
 
     if (beg.h.int_size == 8)
-        golomb_d<int8_t>(fin, fout, beg.h.is_signed, beg.h.k);
+        rice_d<int8_t>(fin, fout, beg.h.is_signed, beg.h.k);
     else if (beg.h.int_size == 16)
-        golomb_d<int16_t>(fin, fout, beg.h.is_signed, beg.h.k);
+        rice_d<int16_t>(fin, fout, beg.h.is_signed, beg.h.k);
     else if (beg.h.int_size == 32)
-        golomb_d<int32_t>(fin, fout, beg.h.is_signed, beg.h.k);
+        rice_d<int32_t>(fin, fout, beg.h.is_signed, beg.h.k);
     else if (beg.h.int_size == 64)
-        golomb_d<int64_t>(fin, fout, beg.h.is_signed, beg.h.k);
+        rice_d<int64_t>(fin, fout, beg.h.is_signed, beg.h.k);
     else
     {
         std::cout << "\nError!\n\nWrong input file for decompression\n";
@@ -280,7 +285,7 @@ bool get_next_bit(std::ifstream &fin, char &ch, int &ind)
 }
 
 template <typename type>
-void golomb_d(std::ifstream &fin, std::ofstream &fout, bool is_signed, int k)
+void rice_d(std::ifstream &fin, std::ofstream &fout, bool is_signed, int k)
 {
     int ind = 0;
     char ch;
