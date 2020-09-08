@@ -3,6 +3,7 @@ Compressor based on Rice coding
 
 This is the implementation of Rice coding. You can find information about this algorithm [here](https://monkeysaudio.com/theory.html).
 
+
 # File Compression
 
 ## Compile program
